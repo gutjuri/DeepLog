@@ -8,7 +8,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 def generate(name):
-    # If you what to replicate the DeepLog paper results(Actually, I have a better result than DeepLog paper results),
+    # If you what to replicate the DeepLog paper results (Actually, I have a better result than DeepLog paper results),
     # you should use the 'list' not 'set' to obtain the full dataset, I use 'set' just for test and acceleration.
     hdfs = set()
     # hdfs = []
@@ -37,6 +37,21 @@ class Model(nn.Module):
         out = self.fc(out[:, -1, :])
         return out
 
+def count_positives(loader, model):
+    positives = 0
+    with torch.no_grad():
+        for line in loader:
+            for i in range(len(line) - window_size):
+                seq = line[i:i + window_size]
+                label = line[i + window_size]
+                seq = torch.tensor(seq, dtype=torch.float).view(-1, window_size, input_size).to(device)
+                label = torch.tensor(label).view(-1).to(device)
+                output = model(seq)
+                predicted = torch.argsort(output, 1)[0][-num_candidates:]
+                if label not in predicted:
+                    positives += 1
+                    break
+    return positives
 
 if __name__ == '__main__':
 
@@ -61,36 +76,14 @@ if __name__ == '__main__':
     print('model_path: {}'.format(model_path))
     test_normal_loader = generate('hdfs_test_normal')
     test_abnormal_loader = generate('hdfs_test_abnormal')
-    TP = 0
-    FP = 0
+
     # Test the model
     start_time = time.time()
-    with torch.no_grad():
-        for line in test_normal_loader:
-            for i in range(len(line) - window_size):
-                seq = line[i:i + window_size]
-                label = line[i + window_size]
-                seq = torch.tensor(seq, dtype=torch.float).view(-1, window_size, input_size).to(device)
-                label = torch.tensor(label).view(-1).to(device)
-                output = model(seq)
-                predicted = torch.argsort(output, 1)[0][-num_candidates:]
-                if label not in predicted:
-                    FP += 1
-                    break
-    with torch.no_grad():
-        for line in test_abnormal_loader:
-            for i in range(len(line) - window_size):
-                seq = line[i:i + window_size]
-                label = line[i + window_size]
-                seq = torch.tensor(seq, dtype=torch.float).view(-1, window_size, input_size).to(device)
-                label = torch.tensor(label).view(-1).to(device)
-                output = model(seq)
-                predicted = torch.argsort(output, 1)[0][-num_candidates:]
-                if label not in predicted:
-                    TP += 1
-                    break
+    FP = count_positives(test_normal_loader, model)
+    TP = count_positives(test_abnormal_loader, model)
     elapsed_time = time.time() - start_time
     print('elapsed_time: {:.3f}s'.format(elapsed_time))
+
     # Compute precision, recall and F1-measure
     FN = len(test_abnormal_loader) - TP
     P = 100 * TP / (TP + FP)
