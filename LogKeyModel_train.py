@@ -15,7 +15,7 @@ def generate(name):
     num_sessions = 0
     inputs = []
     outputs = []
-    with open('data/' + name, 'r') as f:
+    with open(name, 'r') as f:
         for line in f.readlines():
             num_sessions += 1
             line = tuple(map(lambda n: n - 1, map(int, line.strip().split())))
@@ -57,13 +57,15 @@ if __name__ == '__main__':
     parser.add_argument('-num_layers', default=2, type=int)
     parser.add_argument('-hidden_size', default=64, type=int)
     parser.add_argument('-window_size', default=10, type=int)
+    parser.add_argument('-training_dataset', default="data/hdfs_train", type=string)
     args = parser.parse_args()
     num_layers = args.num_layers
     hidden_size = args.hidden_size
     window_size = args.window_size
+    name = args.training_dataset
 
     model = Model(input_size, hidden_size, num_layers, num_classes).to(device)
-    seq_dataset = generate('hdfs_train')
+    seq_dataset = generate(name)
     dataloader = DataLoader(seq_dataset, batch_size=batch_size, shuffle=True, pin_memory=True)
     writer = SummaryWriter(log_dir='log/' + log)
 

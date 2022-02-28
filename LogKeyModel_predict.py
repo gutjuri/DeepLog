@@ -12,7 +12,7 @@ def generate(name):
     # you should use the 'list' not 'set' to obtain the full dataset, I use 'set' just for test and acceleration.
     hdfs = set()
     # hdfs = []
-    with open('data/' + name, 'r') as f:
+    with open(name, 'r') as f:
         for ln in f.readlines():
             ln = list(map(lambda n: n - 1, map(int, ln.strip().split())))
             ln = ln + [-1] * (window_size + 1 - len(ln))
@@ -50,7 +50,6 @@ def count_positives(loader, model):
                 predicted = torch.argsort(output, 1)[0][-num_candidates:]
                 if label not in predicted:
                     positives += 1
-                    break
     return positives
 
 if __name__ == '__main__':
@@ -64,6 +63,8 @@ if __name__ == '__main__':
     parser.add_argument('-hidden_size', default=64, type=int)
     parser.add_argument('-window_size', default=10, type=int)
     parser.add_argument('-num_candidates', default=9, type=int)
+    parser.add_argument('-normal_dataset', default='data/hdfs_test_normal', type=string)
+    parser.add_argument('-abnormal_dataset', default='data/hdfs_test_abnormal', type=string)
     args = parser.parse_args()
     num_layers = args.num_layers
     hidden_size = args.hidden_size
@@ -74,8 +75,8 @@ if __name__ == '__main__':
     model.load_state_dict(torch.load(model_path))
     model.eval()
     print('model_path: {}'.format(model_path))
-    test_normal_loader = generate('hdfs_test_normal')
-    test_abnormal_loader = generate('hdfs_test_abnormal')
+    test_normal_loader = generate(args.normal_dataset)
+    test_abnormal_loader = generate(args.abnormal_dataset)
 
     # Test the model
     start_time = time.time()
