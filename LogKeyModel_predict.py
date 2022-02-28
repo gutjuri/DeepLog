@@ -63,8 +63,8 @@ if __name__ == '__main__':
     parser.add_argument('-hidden_size', default=64, type=int)
     parser.add_argument('-window_size', default=10, type=int)
     parser.add_argument('-num_candidates', default=9, type=int)
-    parser.add_argument('-normal_dataset', default='data/hdfs_test_normal', type=string)
-    parser.add_argument('-abnormal_dataset', default='data/hdfs_test_abnormal', type=string)
+    parser.add_argument('-normal_dataset', default='data/hdfs_test_normal', type=str)
+    parser.add_argument('-abnormal_dataset', default='data/hdfs_test_abnormal', type=str)
     args = parser.parse_args()
     num_layers = args.num_layers
     hidden_size = args.hidden_size
@@ -81,7 +81,7 @@ if __name__ == '__main__':
     # Test the model
     start_time = time.time()
     FP = count_positives(test_normal_loader, model)
-    TP = count_positives(test_abnormal_loader, model)
+    TP = 0# count_positives(test_abnormal_loader, model)
     elapsed_time = time.time() - start_time
     print('elapsed_time: {:.3f}s'.format(elapsed_time))
 

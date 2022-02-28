@@ -57,7 +57,7 @@ if __name__ == '__main__':
     parser.add_argument('-num_layers', default=2, type=int)
     parser.add_argument('-hidden_size', default=64, type=int)
     parser.add_argument('-window_size', default=10, type=int)
-    parser.add_argument('-training_dataset', default="data/hdfs_train", type=string)
+    parser.add_argument('-training_dataset', default="data/hdfs_train", type=str)
     args = parser.parse_args()
     num_layers = args.num_layers
     hidden_size = args.hidden_size
