@@ -81,7 +81,7 @@ if __name__ == '__main__':
     # Test the model
     start_time = time.time()
     FP = count_positives(test_normal_loader, model)
-    TP = 0# count_positives(test_abnormal_loader, model)
+    TP = 1# count_positives(test_abnormal_loader, model)
     elapsed_time = time.time() - start_time
     print('elapsed_time: {:.3f}s'.format(elapsed_time))
 
