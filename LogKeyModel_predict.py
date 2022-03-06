@@ -52,7 +52,6 @@ def count_positives(loader, model):
     return positives
 
 if __name__ == '__main__':
-
     # Hyperparameters
     num_classes = 28
     input_size = 1
