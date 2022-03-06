@@ -21,7 +21,6 @@ def generate(name):
     print('Number of sessions({}): {}'.format(name, len(hdfs)))
     return hdfs
 
-
 class Model(nn.Module):
     def __init__(self, input_size, hidden_size, num_layers, num_keys):
         super(Model, self).__init__()
