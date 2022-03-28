@@ -8,7 +8,7 @@ import argparse
 import os
 
 # Device configuration
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+device = torch.device("cpu") #  torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 def generate(name):
