@@ -9,7 +9,7 @@ import os
 
 # Device configuration
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
+#device = torch.device("cpu")
 
 def generate(name):
     num_sessions = 0
@@ -47,7 +47,7 @@ class Model(nn.Module):
 if __name__ == '__main__':
 
     # Hyperparameters
-    num_classes = 28
+    num_classes = 85
     num_epochs = 300
     batch_size = 2048
     input_size = 1
