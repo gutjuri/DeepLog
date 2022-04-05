@@ -3,9 +3,7 @@ import torch.nn as nn
 import time
 import argparse
 
-# Device configuration
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
+from LogKeyModel import Model, device
 
 def generate(name):
     # If you what to replicate the DeepLog paper results (Actually, I have a better result than DeepLog paper results),
@@ -20,21 +18,6 @@ def generate(name):
             # hdfs.append(tuple(ln))
     print('Number of sessions({}): {}'.format(name, len(hdfs)))
     return hdfs
-
-class Model(nn.Module):
-    def __init__(self, input_size, hidden_size, num_layers, num_keys):
-        super(Model, self).__init__()
-        self.hidden_size = hidden_size
-        self.num_layers = num_layers
-        self.lstm = nn.LSTM(input_size, hidden_size, num_layers, batch_first=True)
-        self.fc = nn.Linear(hidden_size, num_keys)
-
-    def forward(self, x):
-        h0 = torch.zeros(self.num_layers, x.size(0), self.hidden_size).to(device)
-        c0 = torch.zeros(self.num_layers, x.size(0), self.hidden_size).to(device)
-        out, _ = self.lstm(x, (h0, c0))
-        out = self.fc(out[:, -1, :])
-        return out
 
 def count_positives(loader, model):
     positives = 0
@@ -53,7 +36,7 @@ def count_positives(loader, model):
 
 if __name__ == '__main__':
     # Hyperparameters
-    num_classes = 28
+    num_classes = 85
     input_size = 1
     model_path = 'model/Adam_batch_size=2048_epoch=300.pt'
     parser = argparse.ArgumentParser()
