@@ -7,9 +7,7 @@ from torch.utils.data import TensorDataset, DataLoader
 import argparse
 import os
 
-# Device configuration
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-#device = torch.device("cpu")
+from LogKeyModel import Model, device
 
 def generate(name):
     num_sessions = 0
@@ -26,23 +24,6 @@ def generate(name):
     print('Number of seqs({}): {}'.format(name, len(inputs)))
     dataset = TensorDataset(torch.tensor(inputs, dtype=torch.float), torch.tensor(outputs))
     return dataset
-
-
-class Model(nn.Module):
-    def __init__(self, input_size, hidden_size, num_layers, num_keys):
-        super(Model, self).__init__()
-        self.hidden_size = hidden_size
-        self.num_layers = num_layers
-        self.lstm = nn.LSTM(input_size, hidden_size, num_layers, batch_first=True)
-        self.fc = nn.Linear(hidden_size, num_keys)
-
-    def forward(self, x):
-        h0 = torch.zeros(self.num_layers, x.size(0), self.hidden_size).to(device)
-        c0 = torch.zeros(self.num_layers, x.size(0), self.hidden_size).to(device)
-        out, _ = self.lstm(x, (h0, c0))
-        out = self.fc(out[:, -1, :])
-        return out
-
 
 if __name__ == '__main__':
 
@@ -67,7 +48,7 @@ if __name__ == '__main__':
     model = Model(input_size, hidden_size, num_layers, num_classes).to(device)
     seq_dataset = generate(name)
     dataloader = DataLoader(seq_dataset, batch_size=batch_size, shuffle=True, pin_memory=True)
-    writer = SummaryWriter(log_dir='log/' + log)
+    writer = SummaryWriter(log_dir='log/' + log, max_queue=1)
 
     # Loss and optimizer
     criterion = nn.CrossEntropyLoss()
@@ -90,6 +71,8 @@ if __name__ == '__main__':
             train_loss += loss.item()
             optimizer.step()
             writer.add_graph(model, seq)
+            writer.flush()
+            #print(step)
         print('Epoch [{}/{}], train_loss: {:.4f}'.format(epoch + 1, num_epochs, train_loss / total_step))
         writer.add_scalar('train_loss', train_loss / total_step, epoch + 1)
     elapsed_time = time.time() - start_time
