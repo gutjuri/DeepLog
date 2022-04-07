@@ -31,7 +31,7 @@ if __name__ == '__main__':
     batch_size = 2048
     input_size = 1
     model_dir = 'model'
-    log = 'Adam_batch_size={}_epoch={}'.format(str(batch_size), str(num_epochs))
+    
     
     args = parseargs()
     
@@ -43,9 +43,9 @@ if __name__ == '__main__':
     name = args.training_dataset
 
     device = torch.device("cuda" if (torch.cuda.is_available() and args.cuda) else "cpu")
+    log = 'Adam_batch_size={}_epoch={}'.format(str(batch_size), str(num_epochs))
 
-
-    model = Model(input_size, hidden_size, num_layers, num_classes).to(device)
+    model = Model(input_size, hidden_size, num_layers, num_classes, device).to(device)
     seq_dataset = generate(name)
     dataloader = DataLoader(seq_dataset, batch_size=batch_size, shuffle=True, pin_memory=True)
     writer = SummaryWriter(log_dir='log/' + log, max_queue=1)
