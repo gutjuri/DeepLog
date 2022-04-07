@@ -48,7 +48,7 @@ if __name__ == '__main__':
 
     device = torch.device("cuda" if (torch.cuda.is_available() and args.cuda) else "cpu")
 
-    model = Model(input_size, hidden_size, num_layers, num_classes).to(device)
+    model = Model(input_size, hidden_size, num_layers, num_classes, device).to(device)
     model.load_state_dict(torch.load(model_path))
     model.eval()
     print('model_path: {}'.format(model_path))
