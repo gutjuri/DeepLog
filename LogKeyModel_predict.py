@@ -36,18 +36,12 @@ def count_positives(loader, model):
 
 if __name__ == '__main__':
     # Hyperparameters
-    num_classes = 85
     input_size = 1
     model_path = 'model/Adam_batch_size=2048_epoch=300.pt'
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-num_layers', default=2, type=int)
-    parser.add_argument('-hidden_size', default=64, type=int)
-    parser.add_argument('-window_size', default=10, type=int)
-    parser.add_argument('-num_candidates', default=9, type=int)
-    parser.add_argument('-normal_dataset', default='data/hdfs_test_normal', type=str)
-    parser.add_argument('-abnormal_dataset', default='data/hdfs_test_abnormal', type=str)
-    args = parser.parse_args()
+    
+    args = parseargs()
     num_layers = args.num_layers
+    num_classes = args.num_classes
     hidden_size = args.hidden_size
     window_size = args.window_size
     num_candidates = args.num_candidates

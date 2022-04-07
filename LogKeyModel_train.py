@@ -7,7 +7,7 @@ from torch.utils.data import TensorDataset, DataLoader
 import argparse
 import os
 
-from LogKeyModel import Model, device
+from LogKeyModel import Model, device, parseargs
 
 def generate(name):
     num_sessions = 0
@@ -28,19 +28,16 @@ def generate(name):
 if __name__ == '__main__':
 
     # Hyperparameters
-    num_classes = 85
     num_epochs = 300
     batch_size = 2048
     input_size = 1
     model_dir = 'model'
     log = 'Adam_batch_size={}_epoch={}'.format(str(batch_size), str(num_epochs))
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-num_layers', default=2, type=int)
-    parser.add_argument('-hidden_size', default=64, type=int)
-    parser.add_argument('-window_size', default=10, type=int)
-    parser.add_argument('-training_dataset', default="data/hdfs_train", type=str)
-    args = parser.parse_args()
+    
+    args = parseargs()
+    
     num_layers = args.num_layers
+    num_classes = args.num_classes
     hidden_size = args.hidden_size
     window_size = args.window_size
     name = args.training_dataset
