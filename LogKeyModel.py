@@ -19,3 +19,17 @@ class Model(nn.Module):
         out = self.fc(out[:, -1, :])
         return out
 
+def parseargs():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-num_layers', default=2, type=int)
+    parser.add_argument('-num_classes', default=300, type=int)
+    parser.add_argument('-hidden_size', default=64, type=int)
+    parser.add_argument('-window_size', default=10, type=int)
+    parser.add_argument('-training_dataset', default="data/hdfs_train", type=str)
+
+    parser.add_argument('-num_candidates', default=9, type=int)
+    parser.add_argument('-normal_dataset', default='data/hdfs_test_normal', type=str)
+    parser.add_argument('-abnormal_dataset', default='data/hdfs_test_abnormal', type=str)
+
+    args = parser.parse_args()
+    return args
