@@ -3,7 +3,7 @@ import torch.nn as nn
 import time
 import argparse
 
-from LogKeyModel import Model, device, parseargs
+from LogKeyModel import Model, parseargs
 
 def generate(name):
     # If you what to replicate the DeepLog paper results (Actually, I have a better result than DeepLog paper results),
@@ -19,7 +19,7 @@ def generate(name):
     print('Number of sessions({}): {}'.format(name, len(hdfs)))
     return hdfs
 
-def count_positives(loader, model):
+def count_positives(loader, model, device):
     positives = 0
     with torch.no_grad():
         for line in loader:
@@ -46,6 +46,8 @@ if __name__ == '__main__':
     window_size = args.window_size
     num_candidates = args.num_candidates
 
+    device = torch.device("cuda" if (torch.cuda.is_available() and args.cuda) else "cpu")
+
     model = Model(input_size, hidden_size, num_layers, num_classes).to(device)
     model.load_state_dict(torch.load(model_path))
     model.eval()
@@ -55,8 +57,8 @@ if __name__ == '__main__':
 
     # Test the model
     start_time = time.time()
-    FP = count_positives(test_normal_loader, model)
-    TP = 1# count_positives(test_abnormal_loader, model)
+    FP = count_positives(test_normal_loader, model, device)
+    TP = 1# count_positives(test_abnormal_loader, model, device)
     elapsed_time = time.time() - start_time
     print('elapsed_time: {:.3f}s'.format(elapsed_time))
 
