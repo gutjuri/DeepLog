@@ -7,7 +7,7 @@ from torch.utils.data import TensorDataset, DataLoader
 import argparse
 import os
 
-from LogKeyModel import Model, device, parseargs
+from LogKeyModel import Model, parseargs
 
 def generate(name):
     num_sessions = 0
