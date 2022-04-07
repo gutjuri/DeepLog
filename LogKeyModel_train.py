@@ -28,7 +28,6 @@ def generate(name):
 if __name__ == '__main__':
 
     # Hyperparameters
-    num_epochs = 300
     batch_size = 2048
     input_size = 1
     model_dir = 'model'
@@ -38,9 +37,13 @@ if __name__ == '__main__':
     
     num_layers = args.num_layers
     num_classes = args.num_classes
+    num_epochs = args.num_epochs
     hidden_size = args.hidden_size
     window_size = args.window_size
     name = args.training_dataset
+
+    device = torch.device("cuda" if (torch.cuda.is_available() and args.cuda) else "cpu")
+
 
     model = Model(input_size, hidden_size, num_layers, num_classes).to(device)
     seq_dataset = generate(name)
@@ -67,11 +70,13 @@ if __name__ == '__main__':
             loss.backward()
             train_loss += loss.item()
             optimizer.step()
-            writer.add_graph(model, seq)
+            if args.log:
+                    writer.add_graph(model, seq)
             writer.flush()
             #print(step)
         print('Epoch [{}/{}], train_loss: {:.4f}'.format(epoch + 1, num_epochs, train_loss / total_step))
-        writer.add_scalar('train_loss', train_loss / total_step, epoch + 1)
+        if args.log:
+            writer.add_scalar('train_loss', train_loss / total_step, epoch + 1)
     elapsed_time = time.time() - start_time
     print('elapsed_time: {:.3f}s'.format(elapsed_time))
     if not os.path.isdir(model_dir):

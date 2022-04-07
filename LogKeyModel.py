@@ -3,8 +3,7 @@ import torch.nn as nn
 import time
 import argparse
 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-#device = torch.device("cpu")
+
 
 class Model(nn.Module):
     def __init__(self, input_size, hidden_size, num_layers, num_keys):
@@ -24,7 +23,8 @@ class Model(nn.Module):
 def parseargs():
     parser = argparse.ArgumentParser()
     parser.add_argument('-num_layers', default=2, type=int)
-    parser.add_argument('-num_classes', default=300, type=int)
+    parser.add_argument('-num_classes', default=415, type=int)
+    parser.add_argument('-num_epochs', default=300, type=int)
     parser.add_argument('-hidden_size', default=64, type=int)
     parser.add_argument('-window_size', default=10, type=int)
     parser.add_argument('-training_dataset', default="data/hdfs_train", type=str)
@@ -32,6 +32,9 @@ def parseargs():
     parser.add_argument('-num_candidates', default=9, type=int)
     parser.add_argument('-normal_dataset', default='data/hdfs_test_normal', type=str)
     parser.add_argument('-abnormal_dataset', default='data/hdfs_test_abnormal', type=str)
+
+    parser.add_argument('-cuda', default=True, type=bool)
+    parser.add_argument('-log', default=True, type=bool)
 
     args = parser.parse_args()
     return args
