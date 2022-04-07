@@ -3,7 +3,7 @@ import torch.nn as nn
 import time
 import argparse
 
-from LogKeyModel import Model, device
+from LogKeyModel import Model, device, parseargs
 
 def generate(name):
     # If you what to replicate the DeepLog paper results (Actually, I have a better result than DeepLog paper results),
