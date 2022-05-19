@@ -8,21 +8,24 @@ from LogKeyModel import Model, parseargs
 def generate(name):
     # If you what to replicate the DeepLog paper results (Actually, I have a better result than DeepLog paper results),
     # you should use the 'list' not 'set' to obtain the full dataset, I use 'set' just for test and acceleration.
-    hdfs = set()
-    # hdfs = []
+    #hdfs = set()
+    hdfs = []
     with open(name, 'r') as f:
         for ln in f.readlines():
+            sid = 0
+            if '|' in ln:
+                sid, ln = ln.split('|', maxsplit=1)
             ln = list(map(lambda n: n - 1, map(int, ln.strip().split())))
             ln = ln + [-1] * (window_size + 1 - len(ln))
-            hdfs.add(tuple(ln))
-            # hdfs.append(tuple(ln))
+            #hdfs.add(tuple(ln))
+            hdfs.append([sid, tuple(ln)])
     print('Number of sessions({}): {}'.format(name, len(hdfs)))
     return hdfs
 
-def count_positives(loader, model, device):
-    positives = 0
+def get_positives(loader, model, device):
+    positives = []
     with torch.no_grad():
-        for line in loader:
+        for [sid, line] in loader:
             for i in range(len(line) - window_size):
                 seq = line[i:i + window_size]
                 label = line[i + window_size]
@@ -31,7 +34,7 @@ def count_positives(loader, model, device):
                 output = model(seq)
                 predicted = torch.argsort(output, 1)[0][-num_candidates:]
                 if label not in predicted:
-                    positives += 1
+                    positives.append(sid)
     return positives
 
 if __name__ == '__main__':
@@ -57,8 +60,14 @@ if __name__ == '__main__':
 
     # Test the model
     start_time = time.time()
-    FP = count_positives(test_normal_loader, model, device)
-    TP = 1# count_positives(test_abnormal_loader, model, device)
+
+    false_pos = get_positives(test_normal_loader, model, device)
+    #true_pos = get_positives(test_abnormal_loader, model, device)
+
+    print(false_pos)
+
+    FP = len(false_pos)
+    TP = 1 # len(true_pos)
     elapsed_time = time.time() - start_time
     print('elapsed_time: {:.3f}s'.format(elapsed_time))
 
