@@ -13,6 +13,7 @@ def generate(name):
     num_sessions = 0
     inputs = []
     outputs = []
+    start_time = time.time()
     with open(name, 'r') as f:
         for line in f.readlines():
             num_sessions += 1
@@ -20,6 +21,8 @@ def generate(name):
             for i in range(len(line) - window_size):
                 inputs.append(line[i:i + window_size])
                 outputs.append(line[i + window_size])
+    end_time = time.time()
+    print('Loading elapsed_time: {:.3f}s'.format(elapsed_time))
     print('Number of sessions({}): {}'.format(name, num_sessions))
     print('Number of seqs({}): {}'.format(name, len(inputs)))
     dataset = TensorDataset(torch.tensor(inputs, dtype=torch.float), torch.tensor(outputs))
