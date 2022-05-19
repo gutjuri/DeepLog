@@ -22,7 +22,7 @@ def generate(name):
                 inputs.append(line[i:i + window_size])
                 outputs.append(line[i + window_size])
     end_time = time.time()
-    print('Loading elapsed_time: {:.3f}s'.format(elapsed_time))
+    print('Loading elapsed_time: {:.3f}s'.format(end_time - start_time))
     print('Number of sessions({}): {}'.format(name, num_sessions))
     print('Number of seqs({}): {}'.format(name, len(inputs)))
     dataset = TensorDataset(torch.tensor(inputs, dtype=torch.float), torch.tensor(outputs))
