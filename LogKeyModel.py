@@ -17,7 +17,7 @@ class Model(nn.Module):
     def forward(self, x):
         h0 = torch.zeros(self.num_layers, x.size(0), self.hidden_size).to(self.device)
         c0 = torch.zeros(self.num_layers, x.size(0), self.hidden_size).to(self.device)
-        out, _ = self.lstm(x) #, (h0, c0))
+        out, _ = self.lstm(x, (h0, c0))
         out = self.fc(out[:, -1, :])
         return out
 
