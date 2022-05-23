@@ -24,6 +24,37 @@ class Model(nn.Module):
         out = self.fc(out[:, -1, :])
         return out
 
+    def predict(self, X, y=None, k=1, variable=False, verbose=True):
+        """Predict the k most likely output values
+            Parameters
+            ----------
+            X : torch.Tensor of shape=(n_samples, seq_len)
+                Input of sequences, these will be one-hot encoded to an array of
+                shape=(n_samples, seq_len, input_size)
+            y : Ignored
+                Ignored
+            k : int, default=1
+                Number of output items to generate
+            variable : boolean, default=False
+                If True, predict inputs of different sequence lengths
+            verbose : boolean, default=True
+                If True, print output
+            Returns
+            -------
+            result : torch.Tensor of shape=(n_samples, k)
+                k most likely outputs
+            confidence : torch.Tensor of shape=(n_samples, k)
+                Confidence levels for each output
+            """
+        # Get the predictions
+        result = super().predict(X, variable=variable, verbose=verbose)
+        # Get the probabilities from the log probabilities
+        result = result.exp()
+        # Compute k most likely outputs
+        confidence, result = result.topk(k)
+        # Return result
+        return result, confidence
+
 def parseargs():
     parser = argparse.ArgumentParser()
     parser.add_argument('-num_layers', default=2, type=int)

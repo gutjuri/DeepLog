@@ -1,16 +1,14 @@
 import torch
 import torch.nn as nn
 import time
-import argparse
-
 from LogKeyModel import Model, parseargs
 
 
 def generate(name):
     # If you what to replicate the DeepLog paper results (Actually, I have a better result than DeepLog paper results),
     # you should use the 'list' not 'set' to obtain the full dataset, I use 'set' just for test and acceleration.
-    # hdfs = set()
-    hdfs = []
+    hdfs = set()
+    #hdfs = []
     start_t = time.time()
     with open(name, "r") as f:
         for ln in f.readlines():
@@ -19,8 +17,8 @@ def generate(name):
                 sid, ln = ln.split("|", maxsplit=1)
             ln = list(map(lambda n: n - 1, map(int, ln.strip().split())))
             ln = ln + [-1] * (window_size + 1 - len(ln))
-            # hdfs.add(tuple(ln))
-            hdfs.append([sid, tuple(ln)])
+            hdfs.add((sid, tuple(ln)))
+            #hdfs.append((sid, tuple(ln)))
     end_t = time.time()
     print("Loading elapsed_time: {:.3f}s".format(end_t - start_t))
     print("Number of sessions({}): {}".format(name, len(hdfs)))
@@ -30,7 +28,10 @@ def generate(name):
 def get_positives(loader, model, device):
     positives = []
     with torch.no_grad():
-        for [sid, line] in loader:
+        
+        for lnnr, (sid, line) in enumerate(loader):
+            if lnnr % 1000 == 0:
+                print(f"Session {lnnr}/{len(loader)} ({lnnr/len(loader)*100:.2f}%)")
             for i in range(len(line) - window_size):
                 seq = line[i : i + window_size]
                 label = line[i + window_size]
@@ -41,16 +42,16 @@ def get_positives(loader, model, device):
                 )
                 label = torch.tensor(label).view(-1).to(device)
                 output = model(seq)
+                #print(output)
                 predicted = torch.argsort(output, 1)[0][-num_candidates:]
                 if label not in predicted:
                     positives.append(sid)
+                    break
     return positives
 
 
 if __name__ == "__main__":
     # Hyperparameters
-    
-
     args = parseargs()
     num_layers = args.num_layers
     num_classes = args.num_classes
@@ -63,7 +64,7 @@ if __name__ == "__main__":
         "cuda" if (torch.cuda.is_available() and args.cuda) else "cpu"
     )
 
-    input_size = num_classes #1
+    input_size = num_classes
 
     model = Model(input_size, hidden_size, num_layers, num_classes, device).to(device)
     model.load_state_dict(torch.load(model_path))
