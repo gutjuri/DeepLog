@@ -24,7 +24,7 @@ class Model(nn.Module):
 def parseargs():
     parser = argparse.ArgumentParser()
     parser.add_argument('-num_layers', default=2, type=int)
-    parser.add_argument('-num_classes', default=415, type=int)
+    parser.add_argument('-num_classes', default=30, type=int)
     parser.add_argument('-num_epochs', default=300, type=int)
     parser.add_argument('-hidden_size', default=64, type=int)
     parser.add_argument('-window_size', default=10, type=int)
