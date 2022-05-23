@@ -10,6 +10,7 @@ def generate(name):
     # you should use the 'list' not 'set' to obtain the full dataset, I use 'set' just for test and acceleration.
     #hdfs = set()
     hdfs = []
+    start_t = time.time()
     with open(name, 'r') as f:
         for ln in f.readlines():
             sid = 0
@@ -19,6 +20,8 @@ def generate(name):
             ln = ln + [-1] * (window_size + 1 - len(ln))
             #hdfs.add(tuple(ln))
             hdfs.append([sid, tuple(ln)])
+    end_t = time.time()
+    print('Loading elapsed_time: {:.3f}s'.format(end_t - start_t))
     print('Number of sessions({}): {}'.format(name, len(hdfs)))
     return hdfs
 
@@ -57,6 +60,7 @@ if __name__ == '__main__':
     print('model_path: {}'.format(model_path))
     test_normal_loader = generate(args.normal_dataset)
     test_abnormal_loader = generate(args.abnormal_dataset)
+    
 
     # Test the model
     start_time = time.time()
@@ -64,7 +68,7 @@ if __name__ == '__main__':
     false_pos = get_positives(test_normal_loader, model, device)
     #true_pos = get_positives(test_abnormal_loader, model, device)
 
-    print(false_pos)
+    #print(false_pos)
 
     FP = len(false_pos)
     TP = 1 # len(true_pos)
