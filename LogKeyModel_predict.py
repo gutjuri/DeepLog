@@ -50,7 +50,7 @@ if __name__ == '__main__':
     hidden_size = args.hidden_size
     window_size = args.window_size
     num_candidates = args.num_candidates
-    model_path = args.model
+    model_path = args.model + '.pt'
 
     device = torch.device("cuda" if (torch.cuda.is_available() and args.cuda) else "cpu")
 
