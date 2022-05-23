@@ -83,6 +83,6 @@ if __name__ == '__main__':
     print('elapsed_time: {:.3f}s'.format(elapsed_time))
     if not os.path.isdir(model_dir):
         os.makedirs(model_dir)
-    torch.save(model.state_dict(), m_path '.pt')
+    torch.save(model.state_dict(), m_path + '.pt')
     writer.close()
     print('Finished Training')
