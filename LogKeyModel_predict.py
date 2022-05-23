@@ -49,7 +49,7 @@ def get_positives(loader, model, device):
 
 if __name__ == "__main__":
     # Hyperparameters
-    input_size = 1
+    
 
     args = parseargs()
     num_layers = args.num_layers
@@ -62,6 +62,8 @@ if __name__ == "__main__":
     device = torch.device(
         "cuda" if (torch.cuda.is_available() and args.cuda) else "cpu"
     )
+
+    input_size = num_classes #1
 
     model = Model(input_size, hidden_size, num_layers, num_classes, device).to(device)
     model.load_state_dict(torch.load(model_path))
