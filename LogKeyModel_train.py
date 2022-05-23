@@ -60,6 +60,7 @@ if __name__ == '__main__':
     start_time = time.time()
     total_step = len(dataloader)
     for epoch in range(num_epochs):  # Loop over the dataset multiple times
+        start_t_e = time.time()
         train_loss = 0
         for step, (seq, label) in enumerate(dataloader):
             # Forward pass
@@ -76,7 +77,8 @@ if __name__ == '__main__':
                     writer.add_graph(model, seq)
             writer.flush()
             #print(step)
-        print('Epoch [{}/{}], train_loss: {:.4f}'.format(epoch + 1, num_epochs, train_loss / total_step))
+        end_t_e = time.time()
+        print('Epoch [{}/{}], train_loss: {:.4f}, t_epoch: {:.3f}s, remaining: {:.3f}s'.format(epoch + 1, num_epochs, train_loss / total_step, end_t_e - start_t_e, ((time.time() - start_time) / epoch) * (num_epochs - epoch)))
         if args.log:
             writer.add_scalar('train_loss', train_loss / total_step, epoch + 1)
     elapsed_time = time.time() - start_time
