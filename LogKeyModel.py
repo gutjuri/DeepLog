@@ -36,6 +36,7 @@ def parseargs():
 
     parser.add_argument('-cuda', default=True, type=bool)
     parser.add_argument('-log', default=True, type=bool)
+    parser.add_argument('-model', default='model/Adam_batch_size=2048_epoch=300.pt', type=str)
 
     args = parser.parse_args()
     return args

@@ -29,7 +29,6 @@ def generate(name):
     return dataset
 
 if __name__ == '__main__':
-
     # Hyperparameters
     batch_size = 2048
     input_size = 1
@@ -44,10 +43,10 @@ if __name__ == '__main__':
     hidden_size = args.hidden_size
     window_size = args.window_size
     name = args.training_dataset
+    m_path = args.model
 
     device = torch.device("cuda" if (torch.cuda.is_available() and args.cuda) else "cpu")
     log = 'Adam_batch_size={}_epoch={}'.format(str(batch_size), str(num_epochs))
-
     model = Model(input_size, hidden_size, num_layers, num_classes, device).to(device)
     seq_dataset = generate(name)
     dataloader = DataLoader(seq_dataset, batch_size=batch_size, shuffle=True, pin_memory=True)
@@ -84,6 +83,6 @@ if __name__ == '__main__':
     print('elapsed_time: {:.3f}s'.format(elapsed_time))
     if not os.path.isdir(model_dir):
         os.makedirs(model_dir)
-    torch.save(model.state_dict(), model_dir + '/' + log + '.pt')
+    torch.save(model.state_dict(), m_path '.pt')
     writer.close()
     print('Finished Training')
