@@ -4,7 +4,6 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.utils.tensorboard import SummaryWriter
 from torch.utils.data import TensorDataset, DataLoader
-import argparse
 import os
 
 from LogKeyModel import Model, parseargs
@@ -35,7 +34,6 @@ def generate(name):
 if __name__ == "__main__":
     # Hyperparameters
     batch_size = 2048
-    input_size = 1
     model_dir = "model"
 
     args = parseargs()
@@ -51,6 +49,8 @@ if __name__ == "__main__":
     device = torch.device(
         "cuda" if (torch.cuda.is_available() and args.cuda) else "cpu"
     )
+    input_size = args.num_classes #1
+
     log = "Adam_batch_size={}_epoch={}".format(str(batch_size), str(num_epochs))
     model = Model(input_size, hidden_size, num_layers, num_classes, device).to(device)
     seq_dataset = generate(name)
