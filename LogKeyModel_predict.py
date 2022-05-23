@@ -16,7 +16,7 @@ def generate(name):
             if "|" in ln:
                 sid, ln = ln.split("|", maxsplit=1)
             ln = list(map(lambda n: n - 1, map(int, ln.strip().split())))
-            ln = ln + [-1] * (window_size + 1 - len(ln))
+            #ln = ln + [-1] * (window_size + 1 - len(ln))
             hdfs.add((sid, tuple(ln)))
             #hdfs.append((sid, tuple(ln)))
     end_t = time.time()
