@@ -40,7 +40,6 @@ def get_positives(loader, model, device):
 if __name__ == '__main__':
     # Hyperparameters
     input_size = 1
-    model_path = 'model/Adam_batch_size=2048_epoch=300.pt'
     
     args = parseargs()
     num_layers = args.num_layers
@@ -48,6 +47,7 @@ if __name__ == '__main__':
     hidden_size = args.hidden_size
     window_size = args.window_size
     num_candidates = args.num_candidates
+    model_path = args.model
 
     device = torch.device("cuda" if (torch.cuda.is_available() and args.cuda) else "cpu")
 
