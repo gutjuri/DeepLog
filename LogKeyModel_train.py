@@ -71,7 +71,7 @@ if __name__ == "__main__":
         train_loss = 0
         for step, (seq, label) in enumerate(dataloader):
             # Forward pass
-            seq = seq.clone().detach().view(-1, window_size, input_size).to(device)
+            seq = seq.clone().detach().view(-1, window_size).to(device)
             output = model(seq)
             loss = criterion(output, label.to(device))
 

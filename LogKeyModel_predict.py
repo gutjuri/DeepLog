@@ -37,7 +37,7 @@ def get_positives(loader, model, device):
                 label = line[i + window_size]
                 seq = (
                     torch.tensor(seq, dtype=torch.float)
-                    .view(-1, window_size, input_size)
+                    .view(-1, window_size)
                     .to(device)
                 )
                 label = torch.tensor(label).view(-1).to(device)
