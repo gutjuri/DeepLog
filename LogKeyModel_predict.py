@@ -68,7 +68,7 @@ if __name__ == '__main__':
     false_pos = get_positives(test_normal_loader, model, device)
     #true_pos = get_positives(test_abnormal_loader, model, device)
 
-    print(false_pos)
+    #print(false_pos)
 
     FP = len(false_pos)
     TP = 1 # len(true_pos)
