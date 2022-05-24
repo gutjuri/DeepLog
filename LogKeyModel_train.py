@@ -49,7 +49,7 @@ if __name__ == "__main__":
     device = torch.device(
         "cuda" if (torch.cuda.is_available() and args.cuda) else "cpu"
     )
-    input_size = args.num_classes #1
+    input_size = 1 #args.num_classes #1
 
     log = "Adam_batch_size={}_epoch={}".format(str(batch_size), str(num_epochs))
     model = Model(input_size, hidden_size, num_layers, num_classes, device).to(device)

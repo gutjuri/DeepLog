@@ -16,7 +16,7 @@ class Model(nn.Module):
         self.device = device
 
     def forward(self, x):
-        x = F.one_hot(x.to(torch.int64), self.num_keys).to(torch.float)
+        #x = F.one_hot(x.to(torch.int64), self.num_keys).to(torch.float)
 
         h0 = torch.zeros(self.num_layers, x.size(0), self.hidden_size).to(self.device)
         c0 = torch.zeros(self.num_layers, x.size(0), self.hidden_size).to(self.device)
