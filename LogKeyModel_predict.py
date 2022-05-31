@@ -2,34 +2,44 @@ import torch
 import torch.nn as nn
 import time
 from LogKeyModel import Model, parseargs
+import pandas as pd
+from sklearn.metrics import precision_recall_fscore_support
 
+def load_labels(df, path):
+    label_data = pd.read_csv(
+        path, engine='c', na_filter=False, memory_map=True)
+    label_data = label_data.set_index('id')
+    label_dict = label_data['label'].to_dict()
+    #print(label_dict)
+    df['label'] = df['EventId'].apply(
+        lambda x: 1 if label_dict[x] == 'Anomaly' else 0)
+
+def toList(st):
+    ln= list(map(int, st.split(' ')[:-1]))
+    return ln + [-1] * (window_size + 1 - len(ln))
 
 def generate(name):
     # If you what to replicate the DeepLog paper results (Actually, I have a better result than DeepLog paper results),
     # you should use the 'list' not 'set' to obtain the full dataset, I use 'set' just for test and acceleration.
-    hdfs = set()
-    #hdfs = []
     start_t = time.time()
     with open(name, "r") as f:
-        for ln in f.readlines():
-            sid = 0
-            if "|" in ln:
-                sid, ln = ln.split("|", maxsplit=1)
-            ln = list(map(lambda n: n - 1, map(int, ln.strip().split())))
-            ln = ln + [-1] * (window_size + 1 - len(ln))
-            hdfs.add((sid, tuple(ln)))
-            #hdfs.append((sid, tuple(ln)))
+        lines = f.readlines()
+        df = pd.DataFrame({'EventId': list(map(lambda l: int(l.split('|')[0]), lines)), 'EventSequence': list(
+            map(lambda l: toList(l.split('|', maxsplit=1)[1]), lines))})
+
     end_t = time.time()
     print("Loading elapsed_time: {:.3f}s".format(end_t - start_t))
-    print("Number of sessions({}): {}".format(name, len(hdfs)))
-    return hdfs
+    print("Number of sessions({}): {}".format(name, len(df)))
+    return df
 
 
-def get_positives(loader, model, device):
-    positives = []
+def get_res(loader, model, device):
+    res = []
     with torch.no_grad():
-        
-        for lnnr, (sid, line) in enumerate(loader):
+        for lnnr, dfl in loader.iterrows():
+            sid = dfl[0]
+            line = dfl[1]
+            result_l = 0
             if lnnr % 1000 == 0:
                 print(f"Session {lnnr}/{len(loader)} ({lnnr/len(loader)*100:.2f}%)")
             for i in range(len(line) - window_size):
@@ -45,9 +55,10 @@ def get_positives(loader, model, device):
                 #print(output)
                 predicted = torch.argsort(output, 1)[0][-num_candidates:]
                 if label not in predicted:
-                    positives.append(sid)
+                    result_l = 1
                     break
-    return positives
+            res.append(result_l)        
+    return res
 
 
 if __name__ == "__main__":
@@ -71,29 +82,24 @@ if __name__ == "__main__":
     model.eval()
     print("model_path: {}".format(model_path))
     test_normal_loader = generate(args.normal_dataset)
-    test_abnormal_loader = generate(args.abnormal_dataset)
-
+    #test_abnormal_loader = generate(args.abnormal_dataset)
+    y_true = load_labels(test_normal_loader, args.label_path)
     # Test the model
     start_time = time.time()
 
-    false_pos = get_positives(test_normal_loader, model, device)
-    true_pos = get_positives(test_abnormal_loader, model, device)
+    y_pred = get_res(test_normal_loader, model, device)
 
     # print(false_pos)
 
-    FP = len(false_pos)
-    TP = len(true_pos)
+    P, R, F1, _ = precision_recall_fscore_support(y_pred=y_pred, y_true=test_normal_loader['label'].values, average='binary')
     elapsed_time = time.time() - start_time
     print("elapsed_time: {:.3f}s".format(elapsed_time))
 
     # Compute precision, recall and F1-measure
-    FN = len(test_abnormal_loader) - TP
-    P = 100 * TP / (TP + FP)
-    R = 100 * TP / (TP + FN)
-    F1 = 2 * P * R / (P + R)
+
     print(
-        "false positive (FP): {}, false negative (FN): {}, Precision: {:.3f}%, Recall: {:.3f}%, F1-measure: {:.3f}%".format(
-            FP, FN, P, R, F1
+        "Precision: {:.3f}%, Recall: {:.3f}%, F1-measure: {:.3f}%".format(
+            P, R, F1
         )
     )
     print("Finished Predicting")
