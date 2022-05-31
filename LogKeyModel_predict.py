@@ -103,3 +103,8 @@ if __name__ == "__main__":
         )
     )
     print("Finished Predicting")
+    with open(f"results/{window_size}-{num_layers}-{hidden_size}.csv", "r") as f:
+        t_train = float(f.readline())
+    with open(f"results/{window_size}-{num_layers}-{hidden_size}.csv", "w") as f:
+        f.write("Precision,Recall,F1,t_train,t_predict\n")
+        f.write(f"{P:.3f},{R:.3f},{F1:.3f},{t_train:.3f},{elapsed_time:.3f}\n")
