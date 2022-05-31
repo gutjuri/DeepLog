@@ -17,6 +17,7 @@ def generate(name):
     with open(name, "r") as f:
         for line in f.readlines():
             num_sessions += 1
+            line = line.split('|')[1]
             line = tuple(map(lambda n: n - 1, map(int, line.strip().split())))
             for i in range(len(line) - window_size):
                 inputs.append(line[i : i + window_size])
