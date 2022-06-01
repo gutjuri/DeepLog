@@ -5,18 +5,19 @@ from LogKeyModel import Model, parseargs
 import pandas as pd
 from sklearn.metrics import precision_recall_fscore_support
 
+
 def load_labels(df, path):
-    label_data = pd.read_csv(
-        path, engine='c', na_filter=False, memory_map=True)
-    label_data = label_data.set_index('id')
-    label_dict = label_data['label'].to_dict()
-    #print(label_dict)
-    df['label'] = df['EventId'].apply(
-        lambda x: 1 if label_dict[x] == 'Anomaly' else 0)
+    label_data = pd.read_csv(path, engine="c", na_filter=False, memory_map=True)
+    label_data = label_data.set_index("id")
+    label_dict = label_data["label"].to_dict()
+    # print(label_dict)
+    df["label"] = df["EventId"].apply(lambda x: 1 if label_dict[x] == "Anomaly" else 0)
+
 
 def toList(st):
-    ln= list(map(int, st.split(' ')[:-1]))
+    ln = list(map(int, st.split(" ")[:-1]))
     return ln + [-1] * (window_size + 1 - len(ln))
+
 
 def generate(name):
     # If you what to replicate the DeepLog paper results (Actually, I have a better result than DeepLog paper results),
@@ -24,8 +25,14 @@ def generate(name):
     start_t = time.time()
     with open(name, "r") as f:
         lines = f.readlines()
-        df = pd.DataFrame({'EventId': list(map(lambda l: int(l.split('|')[0]), lines)), 'EventSequence': list(
-            map(lambda l: toList(l.split('|', maxsplit=1)[1]), lines))})
+        df = pd.DataFrame(
+            {
+                "EventId": list(map(lambda l: int(l.split("|")[0]), lines)),
+                "EventSequence": list(
+                    map(lambda l: toList(l.split("|", maxsplit=1)[1]), lines)
+                ),
+            }
+        )
 
     end_t = time.time()
     print("Loading elapsed_time: {:.3f}s".format(end_t - start_t))
@@ -52,12 +59,12 @@ def get_res(loader, model, device):
                 )
                 label = torch.tensor(label).view(-1).to(device)
                 output = model(seq)
-                #print(output)
+                # print(output)
                 predicted = torch.argsort(output, 1)[0][-num_candidates:]
                 if label not in predicted:
                     result_l = 1
                     break
-            res.append(result_l)        
+            res.append(result_l)
     return res
 
 
@@ -75,14 +82,14 @@ if __name__ == "__main__":
         "cuda" if (torch.cuda.is_available() and args.cuda) else "cpu"
     )
 
-    input_size = 1 #num_classes
+    input_size = 1  # num_classes
 
     model = Model(input_size, hidden_size, num_layers, num_classes, device).to(device)
     model.load_state_dict(torch.load(model_path))
     model.eval()
     print("model_path: {}".format(model_path))
     test_normal_loader = generate(args.normal_dataset)
-    #test_abnormal_loader = generate(args.abnormal_dataset)
+    # test_abnormal_loader = generate(args.abnormal_dataset)
     y_true = load_labels(test_normal_loader, args.label_path)
     # Test the model
     start_time = time.time()
@@ -91,17 +98,18 @@ if __name__ == "__main__":
 
     # print(false_pos)
 
-    P, R, F1, _ = precision_recall_fscore_support(y_pred=y_pred, y_true=test_normal_loader['label'].values, average='binary')
+    P, R, F1, _ = precision_recall_fscore_support(
+        y_pred=y_pred,
+        y_true=test_normal_loader["label"].values,
+        average="binary",
+        pos_label=1,
+    )
     elapsed_time = time.time() - start_time
     print("elapsed_time: {:.3f}s".format(elapsed_time))
 
     # Compute precision, recall and F1-measure
 
-    print(
-        "Precision: {:.3f}%, Recall: {:.3f}%, F1-measure: {:.3f}%".format(
-            P, R, F1
-        )
-    )
+    print("Precision: {:.3f}%, Recall: {:.3f}%, F1-measure: {:.3f}%".format(P, R, F1))
     print("Finished Predicting")
     with open(f"results/{window_size}-{num_layers}-{hidden_size}.csv", "r") as f:
         t_train = float(f.readline())

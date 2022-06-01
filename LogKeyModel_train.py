@@ -17,7 +17,7 @@ def generate(name):
     with open(name, "r") as f:
         for line in f.readlines():
             num_sessions += 1
-            line = line.split('|')[1]
+            line = line.split("|")[1]
             line = tuple(map(lambda n: n - 1, map(int, line.strip().split())))
             for i in range(len(line) - window_size):
                 inputs.append(line[i : i + window_size])
@@ -50,7 +50,7 @@ if __name__ == "__main__":
     device = torch.device(
         "cuda" if (torch.cuda.is_available() and args.cuda) else "cpu"
     )
-    input_size = 1 #args.num_classes #1
+    input_size = 1  # args.num_classes #1
 
     log = "Adam_batch_size={}_epoch={}".format(str(batch_size), str(num_epochs))
     model = Model(input_size, hidden_size, num_layers, num_classes, device).to(device)
