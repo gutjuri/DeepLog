@@ -111,8 +111,8 @@ if __name__ == "__main__":
 
     print("Precision: {:.3f}%, Recall: {:.3f}%, F1-measure: {:.3f}%".format(P, R, F1))
     print("Finished Predicting")
-    #with open(f"results/{window_size}-{num_layers}-{hidden_size}.csv", "r") as f:
-    #    t_train = float(f.readline())
+    with open(f"results/{window_size}-{num_layers}-{hidden_size}_t.csv", "r") as f:
+        t_train = float(f.readline())
     with open(f"results/{window_size}-{num_layers}-{hidden_size}-{num_candidates}.csv", "w") as f:
         f.write("Precision,Recall,F1,t_train,t_predict\n")
         f.write(f"{P:.3f},{R:.3f},{F1:.3f},{0:.3f},{elapsed_time:.3f}\n")

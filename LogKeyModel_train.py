@@ -104,5 +104,5 @@ if __name__ == "__main__":
     torch.save(model.state_dict(), m_path + ".pt")
     writer.close()
     print("Finished Training")
-    with open(f"results/{window_size}-{num_layers}-{hidden_size}.csv", "w") as f:
+    with open(f"results/{window_size}-{num_layers}-{hidden_size}_t.csv", "w") as f:
         f.write(f"{elapsed_time}")
