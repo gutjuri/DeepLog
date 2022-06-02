@@ -115,4 +115,4 @@ if __name__ == "__main__":
         t_train = float(f.readline())
     with open(f"results/{window_size}-{num_layers}-{hidden_size}-{num_candidates}.csv", "w") as f:
         f.write("Precision,Recall,F1,t_train,t_predict\n")
-        f.write(f"{P:.3f},{R:.3f},{F1:.3f},{0:.3f},{elapsed_time:.3f}\n")
+        f.write(f"{P:.3f},{R:.3f},{F1:.3f},{t_train:.3f},{elapsed_time:.3f}\n")
