@@ -4,6 +4,7 @@ import time
 from LogKeyModel import Model, parseargs
 import pandas as pd
 from sklearn.metrics import precision_recall_fscore_support, confusion_matrix
+import json
 
 
 def load_labels(df, path):
@@ -118,3 +119,9 @@ if __name__ == "__main__":
     with open(f"results/{window_size}-{num_layers}-{hidden_size}-{num_candidates}.csv", "w") as f:
         f.write("Precision,Recall,F1,t_train,t_predict\n")
         f.write(f"{P:.3f},{R:.3f},{F1:.3f},{t_train:.3f},{elapsed_time:.3f}\n")
+    with open(f"/lustre/work/ws/ws1/ul_csu94-loglizer/benchmarks/benchmark_result_DeepLog", "w") as f:
+        f.write(f"Model,Precision,Recall,F1,t_train,t_predict\n")
+        f.write(f"DeepLog,{P},{R},{F1},{t_train},{elapsed_time}\n")
+    with open("", "w") as f:
+        f.write(json.dumps({"y_true": test_normal_loader["label"].values.tolist, "y_pred": y_pred}))
+    
