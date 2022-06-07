@@ -3,7 +3,7 @@ import torch.nn as nn
 import time
 from LogKeyModel import Model, parseargs
 import pandas as pd
-from sklearn.metrics import precision_recall_fscore_support
+from sklearn.metrics import precision_recall_fscore_support, confusion_matrix
 
 
 def load_labels(df, path):
@@ -104,6 +104,7 @@ if __name__ == "__main__":
         average="binary",
         pos_label=1,
     )
+    cm = confusion_matrix(test_normal_loader["label"].values, y_pred)
     elapsed_time = time.time() - start_time
     print("elapsed_time: {:.3f}s".format(elapsed_time))
 
@@ -111,6 +112,7 @@ if __name__ == "__main__":
 
     print("Precision: {:.3f}%, Recall: {:.3f}%, F1-measure: {:.3f}%".format(P, R, F1))
     print("Finished Predicting")
+    print(f"TN: {cm[0][0]}, FN: {cm[1][0]}, TP: {cm[1][1]}, FP: {cm[0][1]}")
     with open(f"results/{window_size}-{num_layers}-{hidden_size}_t.csv", "r") as f:
         t_train = float(f.readline())
     with open(f"results/{window_size}-{num_layers}-{hidden_size}-{num_candidates}.csv", "w") as f:
