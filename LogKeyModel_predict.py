@@ -13,6 +13,8 @@ def load_labels(df, path):
     label_dict = label_data["label"].to_dict()
     # print(label_dict)
     df["label"] = df["EventId"].apply(lambda x: 1 if label_dict[x] == "Anomaly" else 0)
+    print(f"Positives: {df['label'].sum()} Negatives: {len(df['label']) - df['label'].sum()}")
+    return df["label"].values
 
 
 def toList(st):
@@ -64,6 +66,7 @@ def get_res(loader, model, device):
                 predicted = torch.argsort(output, 1)[0][-num_candidates:]
                 if label not in predicted:
                     result_l = 1
+                    print(sid)
                     break
             res.append(result_l)
     return res
@@ -100,12 +103,12 @@ if __name__ == "__main__":
     # print(false_pos)
 
     P, R, F1, _ = precision_recall_fscore_support(
+        y_true=y_true,
         y_pred=y_pred,
-        y_true=test_normal_loader["label"].values,
         average="binary",
         pos_label=1,
     )
-    cm = confusion_matrix(test_normal_loader["label"].values, y_pred)
+    cm = confusion_matrix(y_true, y_pred)
     elapsed_time = time.time() - start_time
     print("elapsed_time: {:.3f}s".format(elapsed_time))
 
@@ -122,6 +125,6 @@ if __name__ == "__main__":
     with open(f"/lustre/work/ws/ws1/ul_csu94-loglizer/benchmarks/benchmark_result_DeepLog", "w") as f:
         f.write(f"Model,Precision,Recall,F1,t_train,t_predict\n")
         f.write(f"DeepLog,{P},{R},{F1},{t_train},{elapsed_time}\n")
-    with open("", "w") as f:
+    with open("/lustre/work/ws/ws1/ul_csu94-loglizer/benchmarks/vecs-DeepLog", "w") as f:
         f.write(json.dumps({"y_true": test_normal_loader["label"].values.tolist, "y_pred": y_pred}))
     
