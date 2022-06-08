@@ -118,12 +118,15 @@ if __name__ == "__main__":
     print(f"TN: {cm[0][0]}, FN: {cm[1][0]}, TP: {cm[1][1]}, FP: {cm[0][1]}")
     with open(f"results/{window_size}-{num_layers}-{hidden_size}_t.csv", "r") as f:
         t_train = float(f.readline())
+    #t_train = 0
     with open(f"results/{window_size}-{num_layers}-{hidden_size}-{num_candidates}.csv", "w") as f:
         f.write("Precision,Recall,F1,t_train,t_predict\n")
         f.write(f"{P:.3f},{R:.3f},{F1:.3f},{t_train:.3f},{elapsed_time:.3f}\n")
+    #with open("vecs-DeepLog2", "w") as f:
+    #    f.write(json.dumps({"y_true": test_normal_loader["label"].values.tolist(), "y_pred": y_pred}))
     with open(f"/lustre/work/ws/ws1/ul_csu94-loglizer/benchmarks/benchmark_result_DeepLog", "w") as f:
         f.write(f"Model,Precision,Recall,F1,t_train,t_predict\n")
         f.write(f"DeepLog,{P},{R},{F1},{t_train},{elapsed_time}\n")
     with open("/lustre/work/ws/ws1/ul_csu94-loglizer/benchmarks/vecs-DeepLog", "w") as f:
-        f.write(json.dumps({"y_true": test_normal_loader["label"].values.tolist, "y_pred": y_pred}))
+        f.write(json.dumps({"y_true": test_normal_loader["label"].values.tolist(), "y_pred": y_pred}))
     
