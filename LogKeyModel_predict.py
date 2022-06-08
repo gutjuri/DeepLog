@@ -66,7 +66,6 @@ def get_res(loader, model, device):
                 predicted = torch.argsort(output, 1)[0][-num_candidates:]
                 if label not in predicted:
                     result_l = 1
-                    print(sid)
                     break
             res.append(result_l)
     return res
@@ -103,8 +102,8 @@ if __name__ == "__main__":
     # print(false_pos)
 
     P, R, F1, _ = precision_recall_fscore_support(
-        y_true=y_true,
-        y_pred=y_pred,
+        y_true,
+        y_pred,
         average="binary",
         pos_label=1,
     )
