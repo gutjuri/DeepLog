@@ -124,7 +124,7 @@ if __name__ == "__main__":
         f.write(f"{P:.3f},{R:.3f},{F1:.3f},{t_train:.3f},{elapsed_time:.3f}\n")
     #with open("vecs-DeepLog2", "w") as f:
     #    f.write(json.dumps({"y_true": test_normal_loader["label"].values.tolist(), "y_pred": y_pred}))
-    with open(f"/lustre/work/ws/ws1/ul_csu94-loglizer/benchmarks/benchmark_result_DeepLog", "w") as f:
+    with open(f"/lustre/work/ws/ws1/ul_csu94-loglizer/benchmarks/benchmark_result_DeepLog.csv", "w") as f:
         f.write(f"Model,Precision,Recall,F1,t_train,t_predict\n")
         f.write(f"DeepLog,{P},{R},{F1},{t_train},{elapsed_time}\n")
     with open("/lustre/work/ws/ws1/ul_csu94-loglizer/benchmarks/vecs-DeepLog", "w") as f:
