@@ -67,10 +67,10 @@ def get_res(loader, model, device):
                 predicted = torch.argsort(output, 1)[0][-num_candidates:]
                 if label not in predicted:
                     result_l = 1
-                    print(predicted)
-                    print(label)
-                    print(seq)
-                    exit()
+                    #print(predicted)
+                    #print(label)
+                    #print(seq)
+                    #exit()
                     break
             res.append(result_l)
     return res
