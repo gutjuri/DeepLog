@@ -36,7 +36,7 @@ def generate(name):
                 ),
             }
         )
-        df = df[df["EventSequence"].map(lambda l: -1 not in l)]
+        #df = df[df["EventSequence"].apply(lambda l: -1 not in l)]
 
     end_t = time.time()
     print("Loading elapsed_time: {:.3f}s".format(end_t - start_t))
