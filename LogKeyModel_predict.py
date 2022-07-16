@@ -96,7 +96,7 @@ if __name__ == "__main__":
     model.load_state_dict(torch.load(model_path))
     model.eval()
     print("model_path: {}".format(model_path))
-    test_normal_loader = generate(args.normal_dataset)
+    test_normal_loader = generate(args.dataset)
     # test_abnormal_loader = generate(args.abnormal_dataset)
     y_true = load_labels(test_normal_loader, args.label_path)
     # Test the model

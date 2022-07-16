@@ -2,7 +2,6 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import argparse
-from TCN import TCN
 
 
 class Model(nn.Module):
@@ -65,7 +64,7 @@ def parseargs():
     parser.add_argument('-training_dataset', default="data/hdfs_train", type=str)
 
     parser.add_argument('-num_candidates', default=9, type=int)
-    parser.add_argument('-normal_dataset', default='data/hdfs_test_normal', type=str)
+    parser.add_argument('-dataset', default='data/hdfs_test_normal', type=str)
     parser.add_argument('-label_path', type=str)
 
     parser.add_argument('-cuda', default=True, type=bool)
